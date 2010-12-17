@@ -42,7 +42,7 @@
 <xsl:variable name="daisypot-file"></xsl:variable>
 <xsl:variable name="daisypot-width"></xsl:variable>
 <xsl:variable name="title-text">DaisyMaths</xsl:variable>
-<xsl:variable name="sponsor-text">Brought to you by NetSchool</xsl:variable>
+<xsl:variable name="sponsor-text"></xsl:variable>
 
 <!--
 <xsl:variable name="daisypot-file">file:./images/daisypotflower2.gif</xsl:variable>
