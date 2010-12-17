@@ -1,0 +1,35 @@
+Daisymaths Exercises
+====================
+
+This library comprises two modules: the 'core' module contains the
+exercise/problem model, the exercise implementations and problem renderers to
+produce XML representations (DOM and SAX); and the 'pdf' module which contains
+renderers to produce PDF output.
+
+Building
+--------
+
+Requires Java 1.6.  The library is built using Apache Ant (tested with
+Ant 1.8.1).  Use 'ant -projecthelp' to see a list of available targets.
+
+Local build settings can be provided using a build.properties file in the base
+directory.  You can copy conf/build.properties-sample and modify for your own
+usage.
+
+The 'core' module has no dependencies (at the moment).
+
+The 'pdf' module requires Apache Fop (1.0) and all its dependencies.  See
+lib/pdf/README for a list.  The jars can either be copied to lib/pdf or you
+can set the "pdf.jars" classpath property in your build.properties file to
+include the paths to the jars.
+
+If you don't want the PDF module, set the "modules.includes" property in your
+build.properties to be blank.
+
+The modules are compiled to build/<module_name> directories and the jars are
+created in the target/ directory.  Compilation of each module is handled by
+the src/<module_name>/build-module.xml build file which is called from the
+'compile' target of the top-level build file.
+
+
+Geoff Lewis <gsl@gslsrc.net>

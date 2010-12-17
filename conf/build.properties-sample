@@ -1,0 +1,36 @@
+# User-specific build settings.  Copy this file to ${basedir}/build.properties
+# and modify as appropriate.
+#
+# Note that the "dmex.version" property is set in ${basedir}/VERSION.  If you
+# set ${dmex.version} here, it will override the VERSION value.
+
+# Space- or comma-separated list of modules to include (in addition to 'core').
+# Set this property to be blank if you only want to build the 'core' module.
+#modules.includes = pdf
+
+# Set the classpath to the jar dependencies of the 'core' module.  If you
+# don't set the 'core.jars' property, you need to copy the jars to the
+# lib/core directory.  Currently there are no dependencies.
+#core.jars =
+
+# Set the classpath to the jar dependencies of the 'pdf' module.  If you don't
+# set the 'pdf.jars' property, you need to copy the jars to the lib/pdf
+# directory.  See lib/pdf/README for the list of required jars.
+_fop.dir = /opt/fop
+pdf.jars = ${_fop.dir}/build/fop.jar:\
+${_fop.dir}/lib/avalon-framework-4.2.0.jar:\
+${_fop.dir}/lib/batik-all-1.7.jar:\
+${_fop.dir}/lib/commons-io-1.3.1.jar:\
+${_fop.dir}/lib/commons-logging-1.0.4.jar:\
+${_fop.dir}/lib/serializer-2.7.0.jar:\
+${_fop.dir}/lib/xalan-2.7.0.jar:\
+${_fop.dir}/lib/xml-apis-1.3.04.jar:\
+${_fop.dir}/lib/xmlgraphics-commons-1.4.jar
+
+# Set the path to the Checkstyle jar (for the Ant 'checkstyle' target).
+checkstyle.jar = /opt/checkstyle/checkstyle-5.3-all.jar
+
+# Set the path to the JUnit jar (for Ant 'test' targets).
+junit.jar = /opt/junit/junit-4.8.1.jar
+
+# vim: ft=jproperties

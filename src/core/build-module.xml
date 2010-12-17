@@ -1,0 +1,93 @@
+<project name="dmex-core" default="compile">
+
+<target name="compile">
+    <mkdir dir="${build.dir}/core"/>
+
+    <echo message="Compiling dmex core to ${build.dir}/core"/>
+
+    <javac destdir="${build.dir}/core" target="1.6" source="1.6"
+        debug="on" debuglevel="lines,vars,source" deprecation="on"
+        includeAntRuntime="false">
+        <compilerarg value="-Xlint:unchecked"/>
+        <src path="src/core"/>
+        <include name="net/gslsrc/dmex/**/*.java"/>
+        <exclude name="**/.pasture/*.java"/>
+        <classpath>
+            <fileset dir="${lib.dir}/core">
+                <include name="*.jar"/>
+            </fileset>
+            <pathelement path="${core.jars}"/>
+        </classpath>
+    </javac>
+
+    <!-- filtered copy -->
+    <copy todir="${build.dir}/core">
+        <fileset dir="src/core">
+            <patternset refid="filtered.resources"/>
+            <exclude name="build-module.xml"/>
+        </fileset>
+        <filterset refid="release-tokens"/>
+    </copy>
+
+    <jar basedir="${build.dir}/core"
+        destfile="${target.dir}/dmex-${dmex.version}.jar">
+        <metainf file="${basedir}/LICENSE"/>
+        <manifest>
+            <attribute name="Build-By" value="${user.name}"/>
+            <attribute name="Build-Date" value="${TODAY}"/>
+            <attribute name="Build-Version" value="${dmex.version}"/>
+        </manifest>
+        <service type="net.gslsrc.dmex.render.xsl.ProblemTemplates">
+            <provider classname="net.gslsrc.dmex.exercise.tables.render.TablesRevisionTemplates"/>
+            <provider classname="net.gslsrc.dmex.exercise.longmult.render.LongMultiplicationTemplates"/>
+            <provider classname="net.gslsrc.dmex.exercise.longdiv.render.LongDivisionTemplates"/>
+        </service>
+        <service type="net.gslsrc.dmex.render.ProblemRendererFactory">
+            <provider classname="net.gslsrc.dmex.exercise.tables.render.TablesRevisionProblemRendererFactory"/>
+            <provider classname="net.gslsrc.dmex.exercise.longmult.render.LongMultiplicationProblemRendererFactory"/>
+            <provider classname="net.gslsrc.dmex.exercise.longdiv.render.LongDivisionProblemRendererFactory"/>
+        </service>
+        <service type="net.gslsrc.dmex.exercise.tables.render.TablesRevisionProblemRenderer">
+            <provider classname="net.gslsrc.dmex.exercise.tables.render.DOMTablesRevisionProblemRenderer"/>
+            <provider classname="net.gslsrc.dmex.exercise.tables.render.SAXTablesRevisionProblemRenderer"/>
+        </service>
+        <service type="net.gslsrc.dmex.exercise.longmult.render.LongMultiplicationProblemRenderer">
+            <provider classname="net.gslsrc.dmex.exercise.longmult.render.DOMLongMultiplicationProblemRenderer"/>
+            <provider classname="net.gslsrc.dmex.exercise.longmult.render.SAXLongMultiplicationProblemRenderer"/>
+        </service>
+        <service type="net.gslsrc.dmex.exercise.longdiv.render.LongDivisionProblemRenderer">
+            <provider classname="net.gslsrc.dmex.exercise.longdiv.render.DOMLongDivisionProblemRenderer"/>
+            <provider classname="net.gslsrc.dmex.exercise.longdiv.render.SAXLongDivisionProblemRenderer"/>
+        </service>
+    </jar>
+</target>
+
+<target name="-installjars"                                                         description="Install dependency jars in the ${dest.dir}">
+
+    <fail message="Missing ${dest.dir} destintation dir property"
+        unless="dest.dir"/>
+
+    <echo message="Installing jars to ${dest.dir}"/>
+
+    <!-- Install the core DMEX jar. -->
+    <copy todir="${dest.dir}">
+        <fileset dir="${dmex.dir}/target" excludes="dmex-pdf*.jar"/>
+    </copy>
+
+    <!-- Load the DMEX build.properties to look for a "core.jars" property.  If
+    "core.jars" not set in the build.properties file, set it to blank. -->
+    <property prefix="coretmp" file="${basedir}/build.properties"/>
+    <property name="coretmp.core.jars" value=""/>
+
+    <!-- Copy all the dependency jars from lib/core and/or the core.jars
+    classpath. -->
+    <copy todir="${dest.dir}" flatten="true">
+        <fileset dir="${dmex.dir}/lib/core" includes="*.jar"/>
+        <path>
+            <pathelement path="${coretmp.core.jars}"/>
+        </path>
+    </copy>
+</target>
+
+</project>
+<!-- vim: set ft=ant: -->

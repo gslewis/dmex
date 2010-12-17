@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="dmex" default="compile">
+<description>Daisymaths Exercises library</description>
+
+<tstamp/>
+
+<property file="build.properties"/>
+
+<!-- Set lib version from VERSION file or use default. -->
+<property file="VERSION"/>
+<property name="dmex.version" value="0"/>
+
+<property name="build.dir" location="build"/>
+<property name="target.dir" location="target"/>
+<property name="lib.dir" location="lib"/>
+
+<!-- List the modules to build in addition to 'core'. -->
+<property name="modules.includes" value="pdf"/>
+
+<filterset id="release-tokens">
+    <filter token="build" value="build-${DSTAMP}-${TSTAMP}"/>
+    <filter token="version" value="${dmex.version}"/>
+</filterset>
+
+<patternset id="filtered.resources">
+    <include name="**/jaxb.index"/>
+    <include name="**/*.properties"/>
+    <include name="**/*.xml"/>
+    <include name="**/*.xsl"/>
+    <include name="**/*.txt"/>
+    <include name="**/*.html"/>
+    <exclude name="**/.pasture/**"/>
+</patternset>
+
+<target name="compile" description="Compiles the DMEX modules">
+    <subant inheritRefs="true" inheritall="true" antfile="build-module.xml">
+        <property name="basedir" value="${basedir}"/>
+        <property name="TODAY" value="${TODAY}"/>
+        <dirset dir="src" includes="core ${modules.includes}"/>
+    </subant>
+</target>
+
+<target name="clean" description="Cleans up the build/test environment">
+    <delete dir="${build.dir}"/>
+    <delete dir="${target.dir}"/>
+
+    <delete dir="${basedir}/temp"/>
+</target>
+
+<target name="test-init">
+    <fail message="Missing junit.jar property" unless="junit.jar"/>
+    <fail message="junit.jar value ${junit.jar} does not exist">
+        <condition><not>
+            <available file="${junit.jar}"/>
+        </not></condition>
+    </fail>
+
+    <property name="test.dir" value="${build.dir}/test"/>
+    <property name="test.reports" value="${basedir}/temp/reports"/>
+    <property name="test.temp" value="${basedir}/temp/test"/>
+
+    <available file="test/TEST_LIST" property="test_list"/>
+
+    <path id="test.depend.jars">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${target.dir}">
+            <include name="dmex*.jar"/>
+        </fileset>
+    </path>
+</target>
+
+<!-- Test compile/run targets need to use the jars on the classpath, not the
+build/ class files, because they depend on META-INF/services/ settings which
+are set during jar creation. -->
+<target name="testcompile" depends="test-init,compile"
+    description="Compiles the test cases">
+    <mkdir dir="${test.dir}"/>
+
+    <javac destdir="${test.dir}" target="1.6" source="1.6" debug="on"
+        debuglevel="source,lines,vars" deprecation="on"
+        includeAntRuntime="false">
+        <compilerarg value="-Xlint:unchecked"/>
+        <src path="test"/>
+        <include name="**/*.java"/>
+        <exclude name="**/.pasture/**"/>
+        <classpath>
+            <path refid="test.depend.jars"/>
+            <pathelement location="${junit.jar}"/>
+            <pathelement path="${core.jars}"/>
+            <pathelement path="${pdf.jars}"/>
+        </classpath>
+    </javac>
+
+    <copy todir="${build.dir}/test">
+        <fileset dir="test">
+            <patternset refid="filtered.resources"/>
+            <include name="**/*.txt"/>
+            <exclude name="**/.pasture/**"/>
+        </fileset>
+    </copy>
+</target>
+
+<target name="test" depends="testcompile"
+    description="Run the tests listed in test/TEST_LIST or all tests">
+    <mkdir dir="${test.reports}"/>
+    <mkdir dir="${test.temp}"/>
+
+    <junit printsummary="on" fork="on" forkmode="perTest" maxmemory="128m">
+        <jvmarg value="-Dtest.temp=${test.temp}"/>
+        <jvmarg value="-Djava.util.logging.config.file=src/logging.properties"/>
+        <batchtest todir="${test.reports}">
+            <fileset dir="test">
+                <includesfile name="test/TEST_LIST" if="test_list"/>
+                <include name="**/*Test.java" unless="test_list"/>
+                <exclude name="**/.pasture/**"/>
+            </fileset>
+        </batchtest>
+        <formatter type="plain"/>
+        <classpath>
+            <pathelement path="${test.dir}"/>
+            <path refid="test.depend.jars"/>
+            <pathelement location="${junit.jar}"/>
+            <pathelement path="${core.jars}"/>
+            <pathelement path="${pdf.jars}"/>
+        </classpath>
+    </junit>
+</target>
+
+<target name="checkstyle" depends="compile"
+        description="Check code style of source listed in src/CHECK_LIST">
+    <fail message="Missing checkstyle.jar property" unless="checkstyle.jar"/>
+    <fail message="checkstyle.jar value ${checkstyle.jar} does not exist">
+        <condition><not>
+            <available file="${checkstyle.jar}"/>
+        </not></condition>
+    </fail>
+
+    <taskdef resource="checkstyletask.properties"
+        classpath="${checkstyle.jar}"/>
+
+    <checkstyle config="conf/checks.xml">
+        <fileset dir="src">
+            <includesfile name="src/CHECK_LIST"/>
+            <exclude name="**/.pasture/**"/>
+        </fileset>
+        <classpath>
+            <pathelement path="${build.dir}/core"/>
+            <pathelement path="${build.dir}/pdf"/>
+        </classpath>
+    </checkstyle>
+</target>
+
+<target name="javadoc" depends="compile"
+    description="Generates the Javadoc in ${build.dir}/javadoc">
+    <tstamp>
+        <format property="DOC_YEAR" pattern="yyyy"/>
+    </tstamp>
+
+    <javadoc destdir="${build.dir}/javadoc"
+            doctitle="DMEX ${dmex.version}"
+            windowtitle="DMEX ${dmex.version} - 2010-${DOC_YEAR}"
+            Overview="conf/overview.html">
+        <header>
+            <![CDATA[<i>DMEX ${dmex.version}</i>]]>
+        </header>
+        <fileset dir="src" defaultexcludes="yes">
+            <include name="**/*.java"/>
+            <exclude name="**/.pasture/**"/>
+        </fileset>
+        <classpath>
+            <pathelement path="${build.dir}/core"/>
+            <pathelement path="${build.dir}/pdf"/>
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+            <pathelement path="${core.jars}"/>
+            <pathelement path="${pdf.jars}"/>
+        </classpath>
+    </javadoc>
+</target>
+
+</project>

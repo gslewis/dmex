@@ -1,0 +1,31 @@
+Daisymaths Exercises
+====================
+Geoff Lewis <gsl@gslsrc.net>
+v0.1, December 2010
+
+== Overview ==
+
+Daisymaths was originally developed by Professor Myles Harding to teach
+elementary maths.  It was an interactive Java applet and application.  Later a
+web application was introduced that generated PDF problem sheets.  This was
+written in Perl and used mod_perl.  The PDF generation was done using XSL:FO
+and Apache Fop (http://xmlgraphics.apache.org/fop/).
+
+The DMEX Java library attempts to revive some of the PDF generation resources,
+this time using pure Java.  It comprises:
+
+. The Exercise/Problem model which represents problems as Java classes.
+. Various exercise implementations: times tables, long multiplication, etc.
+. Classes for producing a random sequence of problems while avoiding problem
+  repetition.
+. The rendering model that allows transformation of problems in some render
+  context.
+. Various rendering implementations: XML (DOM & SAX), HTML, PDF.
+
+A separate project uses the DMEX library to provide various webapps.
+
+NOTE: For now, refer to the Javadoc for model details.
+
+////
+// vim: syn=asciidoc:
+////

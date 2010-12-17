@@ -1,0 +1,87 @@
+<project name="dmex-pdf" default="compile">
+
+<target name="compile">
+    <mkdir dir="${build.dir}/pdf"/>
+
+    <echo message="Compiling dmex-pdf to ${build.dir}/pdf"/>
+
+    <javac destdir="${build.dir}/pdf" target="1.6" source="1.6"
+        debug="on" debuglevel="lines,vars,source" deprecation="on"
+        includeAntRuntime="false">
+        <compilerarg value="-Xlint:unchecked"/>
+        <src path="src/pdf"/>
+        <include name="net/gslsrc/dmex/**/*.java"/>
+        <exclude name="**/.pasture/*.java"/>
+        <classpath>
+            <pathelement path="${build.dir}/core"/>
+            <fileset dir="${lib.dir}/pdf">
+                <include name="*.jar"/>
+            </fileset>
+            <pathelement path="${pdf.jars}"/>
+        </classpath>
+    </javac>
+
+    <!-- filtered copy -->
+    <copy todir="${build.dir}/pdf">
+        <fileset dir="src/pdf">
+            <patternset refid="filtered.resources"/>
+            <exclude name="build-module.xml"/>
+        </fileset>
+        <filterset refid="release-tokens"/>
+    </copy>
+
+    <jar basedir="${build.dir}/pdf"
+        destfile="${target.dir}/dmex-pdf-${dmex.version}.jar">
+        <metainf file="${basedir}/LICENSE"/>
+        <manifest>
+            <attribute name="Build-By" value="${user.name}"/>
+            <attribute name="Build-Date" value="${TODAY}"/>
+            <attribute name="Build-Version" value="${dmex.version}"/>
+        </manifest>
+        <service type="net.gslsrc.dmex.render.ProblemTemplates">
+            <provider classname="net.gslsrc.dmex.exercise.tables.render.TablesRevisionTemplates"/>
+            <provider classname="net.gslsrc.dmex.exercise.longmult.render.LongMultiplicationTemplates"/>
+            <provider classname="net.gslsrc.dmex.exercise.longdiv.render.LongDivisionTemplates"/>
+        </service>
+        <service type="net.gslsrc.dmex.exercise.tables.render.TablesRevisionProblemRenderer">
+            <provider classname="net.gslsrc.dmex.exercise.tables.render.PDFTablesRevisionProblemRenderer"/>
+        </service>
+        <service type="net.gslsrc.dmex.exercise.longmult.render.LongMultiplicationProblemRenderer">
+            <provider classname="net.gslsrc.dmex.exercise.longmult.render.PDFLongMultiplicationProblemRenderer"/>
+        </service>
+        <service type="net.gslsrc.dmex.exercise.longdiv.render.LongDivisionProblemRenderer">
+            <provider classname="net.gslsrc.dmex.exercise.longdiv.render.PDFLongDivisionProblemRenderer"/>
+        </service>
+    </jar>
+</target>
+
+<target name="-installjars"
+    description="Install dependency jars in the ${dest.dir}">
+
+    <fail message="Missing ${dest.dir} destintation dir property"
+        unless="dest.dir"/>
+
+    <echo message="Installing jars to ${dest.dir}"/>
+
+    <!-- Install both core DMEX and pdf jars. -->
+    <copy todir="${dest.dir}">
+        <fileset dir="${dmex.dir}/target" includes="*.jar"/>
+    </copy>
+
+    <!-- Load the DMEX build.properties to look for a "pdf.jars" property.  If
+    "pdf.jars" not set in the build.properties file, set it to blank. -->
+    <property prefix="pdftmp" file="${basedir}/build.properties"/>
+    <property name="pdftmp.pdf.jars" value=""/>
+
+    <!-- Copy all the dependency jars from lib/pdf and/or the pdf.jars
+    classpath. -->
+    <copy todir="${dest.dir}" flatten="true">
+        <fileset dir="${dmex.dir}/lib/pdf" includes="*.jar"/>
+        <path>
+            <pathelement path="${pdftmp.pdf.jars}"/>
+        </path>
+    </copy>
+</target>
+
+</project>
+<!-- vim: set ft=ant: -->
