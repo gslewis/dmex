@@ -16,7 +16,7 @@
             <fileset dir="${lib.dir}/core">
                 <include name="*.jar"/>
             </fileset>
-            <pathelement path="${core.jars}"/>
+            <pathelement path="${dmex.core.jars}"/>
         </classpath>
     </javac>
 
@@ -62,7 +62,10 @@
     </jar>
 </target>
 
-<target name="-installjars"                                                         description="Install dependency jars in the ${dest.dir}">
+<!-- Calling target should pass ${basedir} as the DMEX dir and ${dest.dir} for
+the location to which the jars are copied. -->
+<target name="-installjars"
+    description="Install dependency jars in the ${dest.dir}">
 
     <fail message="Missing ${dest.dir} destintation dir property"
         unless="dest.dir"/>
@@ -71,20 +74,21 @@
 
     <!-- Install the core DMEX jar. -->
     <copy todir="${dest.dir}">
-        <fileset dir="${dmex.dir}/target" excludes="dmex-pdf*.jar"/>
+        <fileset dir="${basedir}/target" excludes="dmex-pdf*.jar"/>
     </copy>
 
-    <!-- Load the DMEX build.properties to look for a "core.jars" property.  If
-    "core.jars" not set in the build.properties file, set it to blank. -->
+    <!-- Load the DMEX build.properties to look for a "dmex.core.jars"
+    property.  If "dmex.core.jars" not set in the build.properties file, set
+    it to blank. -->
     <property prefix="coretmp" file="${basedir}/build.properties"/>
-    <property name="coretmp.core.jars" value=""/>
+    <property name="coretmp.dmex.core.jars" value=""/>
 
-    <!-- Copy all the dependency jars from lib/core and/or the core.jars
+    <!-- Copy all the dependency jars from lib/core and/or the dmex.core.jars
     classpath. -->
     <copy todir="${dest.dir}" flatten="true">
-        <fileset dir="${dmex.dir}/lib/core" includes="*.jar"/>
+        <fileset dir="${basedir}/lib/core" includes="*.jar"/>
         <path>
-            <pathelement path="${coretmp.core.jars}"/>
+            <pathelement path="${coretmp.dmex.core.jars}"/>
         </path>
     </copy>
 </target>

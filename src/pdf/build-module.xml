@@ -17,7 +17,7 @@
             <fileset dir="${lib.dir}/pdf">
                 <include name="*.jar"/>
             </fileset>
-            <pathelement path="${pdf.jars}"/>
+            <pathelement path="${dmex.pdf.jars}"/>
         </classpath>
     </javac>
 
@@ -58,27 +58,28 @@
 <target name="-installjars"
     description="Install dependency jars in the ${dest.dir}">
 
-    <fail message="Missing ${dest.dir} destintation dir property"
+    <fail message="Missing ${dest.dir} destination dir property"
         unless="dest.dir"/>
 
     <echo message="Installing jars to ${dest.dir}"/>
 
-    <!-- Install both core DMEX and pdf jars. -->
+    <!-- Install both core DMEX and dmex.pdf jars. -->
     <copy todir="${dest.dir}">
-        <fileset dir="${dmex.dir}/target" includes="*.jar"/>
+        <fileset dir="${basedir}/target" includes="*.jar"/>
     </copy>
 
-    <!-- Load the DMEX build.properties to look for a "pdf.jars" property.  If
-    "pdf.jars" not set in the build.properties file, set it to blank. -->
+    <!-- Load the DMEX build.properties to look for a "dmex.pdf.jars"
+    property.  If "dmex.pdf.jars" not set in the build.properties file, set it
+    to blank. -->
     <property prefix="pdftmp" file="${basedir}/build.properties"/>
-    <property name="pdftmp.pdf.jars" value=""/>
+    <property name="pdftmp.dmex.pdf.jars" value=""/>
 
-    <!-- Copy all the dependency jars from lib/pdf and/or the pdf.jars
+    <!-- Copy all the dependency jars from lib/pdf and/or the dmex.pdf.jars
     classpath. -->
     <copy todir="${dest.dir}" flatten="true">
-        <fileset dir="${dmex.dir}/lib/pdf" includes="*.jar"/>
+        <fileset dir="${basedir}/lib/pdf" includes="*.jar"/>
         <path>
-            <pathelement path="${pdftmp.pdf.jars}"/>
+            <pathelement path="${pdftmp.dmex.pdf.jars}"/>
         </path>
     </copy>
 </target>

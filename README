@@ -8,7 +8,6 @@ renderers to produce PDF output.
 
 Building
 --------
-
 Requires Java 1.6.  The library is built using Apache Ant (tested with
 Ant 1.8.1).  Use 'ant -projecthelp' to see a list of available targets.
 
