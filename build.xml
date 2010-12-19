@@ -88,8 +88,8 @@ are set during jar creation. -->
         <classpath>
             <path refid="test.depend.jars"/>
             <pathelement location="${junit.jar}"/>
-            <pathelement path="${core.jars}"/>
-            <pathelement path="${pdf.jars}"/>
+            <pathelement path="${dmex.core.jars}"/>
+            <pathelement path="${dmex.pdf.jars}"/>
         </classpath>
     </javac>
 
@@ -122,8 +122,8 @@ are set during jar creation. -->
             <pathelement path="${test.dir}"/>
             <path refid="test.depend.jars"/>
             <pathelement location="${junit.jar}"/>
-            <pathelement path="${core.jars}"/>
-            <pathelement path="${pdf.jars}"/>
+            <pathelement path="${dmex.core.jars}"/>
+            <pathelement path="${dmex.pdf.jars}"/>
         </classpath>
     </junit>
 </target>
@@ -175,8 +175,8 @@ are set during jar creation. -->
             <fileset dir="${lib.dir}">
                 <include name="**/*.jar"/>
             </fileset>
-            <pathelement path="${core.jars}"/>
-            <pathelement path="${pdf.jars}"/>
+            <pathelement path="${dmex.core.jars}"/>
+            <pathelement path="${dmex.pdf.jars}"/>
         </classpath>
     </javadoc>
 </target>
