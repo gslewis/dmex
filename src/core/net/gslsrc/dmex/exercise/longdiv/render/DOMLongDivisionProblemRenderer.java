@@ -96,13 +96,28 @@ public class DOMLongDivisionProblemRenderer
             int[] qstep) throws RenderException {
         Element element = doc.createElement("working");
 
-        // Start from step 2 (step 1 is first quotient digit)
+        // Store the step counter in an array so that we can pass-by-ref to
+        // methods that return XML elements.
         int[] step = { 1 };
+
+        // Allocate quotient steps in the qstep array while we build the
+        // working row elements.  The stored results are then used in
+        // makeQuotient().
+        int qindex = 0;
+        int qdiff = 1;
+
         int rindex = 0;
         Integer[] submit = null;
 
         for (WorkingRow row : problem.getWorkingRows()) {
-            qstep[rindex] = step[0]++;
+            // First step always goes to first quotient digit.  Thereafter we
+            // determine how many quotient digits were covered by the working
+            // row (qdiff) and allocate steps for each before starting the
+            // next working row.
+            for (int i = 0; i < qdiff; ++i) {
+                qstep[qindex] = step[0]++;
+                ++qindex;
+            }
 
             Element child = doc.createElement("row");
             child.setAttribute("index", String.valueOf(row.getIndex()));
@@ -128,10 +143,20 @@ public class DOMLongDivisionProblemRenderer
             element.appendChild(child);
 
             ++rindex;
+
+            // If this row covers zeros in the quotient, then we need to step
+            // over the zeros.  If the difference in shift between bigend and
+            // subend is 1, there is no zero in the quotient (for this row).
+            // If 2 (or more) then there are zeros which we step over to fill
+            // the next non-zero quotient digit.
+
+            qdiff = row.getBigEndShift() - row.getSubEndShift();
         }
 
-        while (rindex < qstep.length) {
-            qstep[rindex++] = step[0]++;
+        // Allocate steps to any remaining quotient digits.  This will occur
+        // for trailing zeros.
+        while (qindex < qstep.length) {
+            qstep[qindex++] = step[0]++;
         }
 
         return element;

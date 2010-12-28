@@ -114,7 +114,7 @@ public class LongDivisionProblem extends Problem {
     //  - the product of the q-digit and the divisor: the biggest "dividend"
     //    (bigend)
     //  - subtract the bigend from the preceding bigend or dividend then
-    //    discard least-significant digits until we find the smalled value
+    //    discard least-significant digits until we find the smallest value
     //    larger than the divisor
     //  we repeat until all q-digits have been processed
     public WorkingRow[] getWorkingRows() {

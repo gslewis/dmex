@@ -122,21 +122,29 @@ public class SAXLongDivisionProblemRenderer
         int[] qstep = new int[qchars.length];
 
         int step = 1;
+        int qindex = 0;
+        int qdiff = 1;
         int rindex = 0;
         for (WorkingRow row : problem.getWorkingRows()) {
-            qstep[rindex] = step;
+            // Allocate steps to quotient digits handles by the previous
+            // working row.  First step always goes to first quotient digit.
+            for (int i = 0; i < qdiff; ++i) {
+                qstep[qindex] = step++;
+                ++qindex;
+            }
 
-            // Advance step by length of row's bigend & subend plus one for
-            // the next quotient digit.
+            // Advance step by length of row's bigend & subend.
             step += String.valueOf(row.getBigEnd()).length()
-                    + String.valueOf(row.getSubEnd()).length() + 1;
+                    + String.valueOf(row.getSubEnd()).length();
 
             ++rindex;
+
+            qdiff = row.getBigEndShift() - row.getSubEndShift();
         }
 
         // If quotient has trailing zeros, add their steps as well.
-        if (rindex < qstep.length) {
-            qstep[rindex++] = step++;
+        if (qindex < qstep.length) {
+            qstep[qindex++] = step++;
         }
 
         return qstep;
@@ -147,14 +155,13 @@ public class SAXLongDivisionProblemRenderer
             LongDivisionProblemAnswer answer) throws SAXException {
         startElement(handler, "working");
 
-        int step = 1;
+        // First working step follows first quotient step so always start from
+        // step 2.
+        int step = 2;
         int rindex = 0;
         for (WorkingRow row : problem.getWorkingRows()) {
             startElement(handler, "row", "index",
                     String.valueOf(row.getIndex()));
-
-            // Advance over quotient digit.
-            ++step;
 
             step = renderBigEnd(handler, row.getBigEnd(), step,
                     getBigEndSubmit(rindex, answer),
@@ -166,6 +173,10 @@ public class SAXLongDivisionProblemRenderer
             endElement(handler, "row");
 
             ++rindex;
+
+            // Advance by number of quotient digits handled by this row of
+            // working.
+            step += row.getBigEndShift() - row.getSubEndShift();
         }
 
         endElement(handler, "working");

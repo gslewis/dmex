@@ -60,6 +60,7 @@ public class LongDivisionTest extends AbstractExerciseTest {
         return testdir;
     }
 
+    //@Ignore
     @Test public void testLongDivisionSerialize() {
         LongDivision ex = new LongDivision();
         checkSerial(ex);
@@ -74,6 +75,7 @@ public class LongDivisionTest extends AbstractExerciseTest {
         checkSerial(problems);
     }
 
+    //@Ignore
     @Test public void testLongDivisionHTML() {
         LongDivision ex = new LongDivision();
 
@@ -221,6 +223,25 @@ public class LongDivisionTest extends AbstractExerciseTest {
             e.printStackTrace();
             fail("Failed to render with " + e);
         }
+    }
+
+    //@Ignore
+    @Test public void testLongDivisionQuotientZeros() {
+        int dividend = 7113;
+        int divisor = 70;
+
+        Collection<LongDivisionProblem> list = Collections.singletonList(
+                new LongDivisionProblem(dividend, divisor));
+
+        String title = "Quotient with zeros test";
+
+        renderProblems(list,
+                new DOMRenderContext().setTitle(title),
+                "quotientzeros-xmltest-dom.xml");
+
+        renderProblems(list,
+                new XMLRenderContext().setTitle(title),
+                "quotientzeros-xmltest-sax.xml");
     }
 
     // test a particular problem
