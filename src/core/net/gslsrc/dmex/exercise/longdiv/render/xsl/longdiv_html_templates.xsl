@@ -139,8 +139,9 @@ Parent must supply the following templates:
     </xsl:variable>
 
     <tr class="subend">
-        <td colspan="{$pad + 2}" class="remainder">
+        <td colspan="{$pad + 2}">
             <xsl:if test="$remainder='true'">
+                <xsl:attribute name="class">remainder</xsl:attribute>
                 <span class="remainder">Remainder</span>
             </xsl:if>
         </td>
