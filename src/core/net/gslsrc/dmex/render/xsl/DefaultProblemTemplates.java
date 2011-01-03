@@ -147,7 +147,7 @@ public class DefaultProblemTemplates extends ProblemTemplates {
                     continue;
                 }
 
-                int index = line.indexOf('=');
+                int index = findSeparator(line);
                 if (index == -1) {
                     continue;
                 }
@@ -160,6 +160,7 @@ public class DefaultProblemTemplates extends ProblemTemplates {
                 OutputType ot = null;
                 try {
                     ot = makeOutputType(name);
+
                 // CHECKSTYLE:OFF
                 } catch (Exception e) {
                     System.err.println("Failed to create OutputType form '"
@@ -184,6 +185,18 @@ public class DefaultProblemTemplates extends ProblemTemplates {
             closeQuietly(rin);
             closeQuietly(in);
         }
+    }
+
+    // Valid name/value separators are '=' and ':'
+    private int findSeparator(String line) {
+        assert line != null;
+
+        int index = line.indexOf('=');
+        if (index == -1) {
+            index = line.indexOf(':');
+        }
+
+        return index;
     }
 
     private OutputType makeOutputType(String value) throws Exception {
