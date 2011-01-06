@@ -56,7 +56,7 @@ import javax.xml.transform.stream.StreamSource;
  * Templates can be obtained for a particular {@link Problem} type using the
  * {@link #getTemplates(java.lang.Class)} factory method.  This looks up
  * {@code ProblemTemplates} implementations that are registered as providers
- * of the {@code "net.gslsrc.dmex.render.ProblemTemplates"} service.
+ * of the {@code "net.gslsrc.dmex.render.xsl.ProblemTemplates"} service.
  *
  * @author Geoff Lewis
  */
@@ -189,7 +189,7 @@ public abstract class ProblemTemplates {
     }
 
     /**
-     * Resolves {@literal <xsl:import>} and {@literal <xsl:include>} URIs when
+     * Resolves {@code <xsl:import>} and {@code <xsl:include>} URIs when
      * parsing XSL stylesheets.  Attempts to look the URI up on the classpath.
      * The rules are:
      *

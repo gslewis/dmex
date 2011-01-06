@@ -26,7 +26,17 @@ import net.gslsrc.dmex.exercise.tables.TablesRevisionProblem;
 import net.gslsrc.dmex.render.xsl.DefaultProblemTemplates;
 
 /**
- * Provides the XSL templates for tables revision work sheets.
+ * Provides the XSL templates for tables revision work sheets.  This class is
+ * registered as a provider for the
+ * {@link net.gslsrc.dmex.render.xsl.ProblemTemplates} service for the
+ * {@link TablesRevisionProblem} type.
+ * <p>
+ * The mapping of
+ * {@link net.gslsrc.dmex.render.xsl.ProblemTemplates.OutputType} to XSL
+ * stylesheet is given by the "TablesRevisionTemplates.properties" resource.
+ * All instances of this resource on the classpath will be loaded so you can
+ * extend the available templates by adding stylesheets in a library with its
+ * own "TablesRevisionTemplates.properties" file.
  *
  * @author Geoff Lewis
  */
